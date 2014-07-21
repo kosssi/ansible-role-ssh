@@ -1,0 +1,54 @@
+---
+
+- name: Create user ssh authorized key file
+  user: name={{ item.name }} state=present generate_ssh_key=yes
+  with_items: ssh_authorized_keys
+
+- name: Add SSH keys from local
+  authorized_key:
+     user="{{ item.0.name }}"
+     key="{{ lookup('file', item.1) }}"
+  with_subelements:
+     - ssh_authorized_keys
+     - local
+
+#- name: Get SSH keys from GitHub
+#  uri:
+#    url=https://github.com/"{{ item.1 }}".keys
+#    return_content=true
+#  register: ssh_authorized_keys_github
+#  with_subelements:
+#     - ssh_authorized_keys
+#     - github
+
+#- name: Transform GitHub data
+#  shell:
+#    echo "{{ item.content_location|basename() }}"
+#  register: echo
+#  with_items: ssh_authorized_keys_github.results
+#
+#- debug:
+#    var="{{ item.stdout }}"
+#  with_items: echo.results
+
+#- shell:
+#    echo "{{ item.item.name }}": ["{{ item.content.split('\n') }}"]"
+#  with_items: ssh_authorized_keys_github.results
+#  register: echo
+
+#- debug: var="{{ item.content.split('\n') }}"
+#  register: ssh_authorized_keys_github_split
+#  with_items: ssh_authorized_keys_github.results
+#
+#- name: Add SSH keys from GitHub
+#  authorized_key:
+#     user="{{ item.0.name }}"
+#     key="{{ item.1 }}"
+#  with_subelements:
+#     - ssh_authorized_keys_github.results
+#     - content
+
+#- name: Add SSH keys from GitHub
+#  with_nested:
+#    - ssh_authorized_keys_github.results
+#    - ssh_authorized_keys_github.results.content

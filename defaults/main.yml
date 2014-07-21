@@ -1,5 +1,13 @@
 ---
 
 ssh_packages:
+  - python-httplib2 # for github keys
   - openssh-client
   - openssh-server
+
+ssh_authorized_keys:
+  - name: www-data
+    local:
+      -  "~/.ssh/id_rsa.pub"
+    github:
+      - kosssi
