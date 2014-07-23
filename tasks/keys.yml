@@ -4,19 +4,37 @@
   user: name={{ item.name }} state=present generate_ssh_key=yes
   with_items: ssh_authorized_keys
 
-- name: Add SSH keys from local
-  authorized_key:
-     user="{{ item.0.name }}"
-     key="{{ lookup('file', item.1) }}"
+#- name: Add SSH keys from local
+#  authorized_key:
+#     user="{{ item.0.name }}"
+#     key="{{ lookup('file', item.1) }}"
+#  with_subelements:
+#     - ssh_authorized_keys
+#     - local
+
+- name: Get SSH keys from GitHub
+  uri:
+    url=https://github.com/"{{ item.1 }}".keys
+    return_content=true
+  register: ssh_authorized_keys_github
   with_subelements:
-     - ssh_authorized_keys
-     - local
+    - ssh_authorized_keys
+    - github
+
+- name: debug
+  debug:
+    var=item.content
+  with_items: ssh_authorized_keys_github.results
 
 #- name: Get SSH keys from GitHub
-#  uri:
-#    url=https://github.com/"{{ item.1 }}".keys
-#    return_content=true
-#  register: ssh_authorized_keys_github
+#  shell:
+#    wget "https://github.com/{{ item.1 }}.keys" --output-document="{{ ssh_tmp }}-{{ item.1 }}"
+#  with_subelements:
+#     - ssh_authorized_keys
+#     - github
+#
+#- debug:
+#    var="{{ item }}"
 #  with_subelements:
 #     - ssh_authorized_keys
 #     - github

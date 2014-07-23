@@ -7,7 +7,9 @@ ssh_packages:
 
 ssh_authorized_keys:
   - name: www-data
-    local:
-      -  "~/.ssh/id_rsa.pub"
+#    local:
+#      -  "~/.ssh/id_rsa.pub"
     github:
       - kosssi
+
+ssh_tmp: /tmp/keys
