@@ -1,0 +1,10 @@
+---
+
+ssh_packages:
+  - openssh-client
+  - openssh-server
+
+ssh_authorized_keys:
+  - name: www-data
+    local:
+      -  "~/.ssh/id_rsa.pub"
