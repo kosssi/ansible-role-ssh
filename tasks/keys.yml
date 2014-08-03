@@ -5,12 +5,13 @@
     name={{ item.name }}
     state=present
     generate_ssh_key=yes
+    home={{ item.home | default('/home/' ~ item.name) }}
   with_items: ssh_authorized_keys
 
 - name: Grant ssh rights
   user:
     name={{ item.name }}
-    shell=/bin/bash
+    shell={{ item.shell | default('/bin/bash') }}
   with_items: ssh_authorized_keys
 
 - name: Add SSH keys from local
